@@ -7,18 +7,24 @@ pen:
     resolution_x: 1
     resolution_y: 1
     max_pressure: 2048   # manual says 8192 but cheap chinese chip reports outputs much less values
-    pressure_min: 300  # when pressing the tablet pen as hard as functionally possible (yours may vary)
-    pressure_contact_threshold: 600    # when making contact with the tablet surface (yours may vary)
+    pressure_min: 900  # when pressing the tablet pen as hard as functionally possible (yours may vary) (currently mot used)
+    pressure_contact_threshold: 550    # when making contact with the tablet surface (yours may vary)
+    pressure_contact_threshold_up: 30  # change of pressure when releasing contact with the tablet surface - hysteresis (yours may vary)
 actions:
-    pen_touch: BTN_LEFT #BTN_TOUCH
+    pen_touch:
+        - BTN_LEFT
+        #- BTN_TOUCH #In current implementations it is internally mapped as BTN_LEFT(!), so it is a nonsense(?) to use it.
     pen: BTN_TOOL_PEN
+    # 16.06.2026 comment: Should work as mixed-mode devices (configured as mouse and tablet at once).
+    # Look into source comment if interested in internal life of xinput ;)
     pen_buttons:
     # https://sites.uclouvain.be/SystInfo/usr/include/linux/input.h.html
     # https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
     #for Buttons :: python -c "from evdev import ecodes; print([x for x in dir(ecodes) if 'BTN_' in x])"
-        - BTN_STYLUS                    #1st button closest to tip
-        #- BTN_RIGHT                     # 1st Btn for right click -> We can't do this https://www.kernel.org/doc/html/v4.14/input/event-codes.html (didn't find why)
-        - BTN_STYLUS2                   #2nd button
+        #- BTN_STYLUS                  #1st button closest to tip
+        - BTN_MIDDLE                  #1st button as middle mouse button
+        #- BTN_STYLUS2                 #2nd button as stylus2
+        - BTN_RIGHT                   #2nd button as right mouse button
     tablet_buttons: 
     #for Keys :: python -c "from evdev import ecodes; print([x for x in dir(ecodes) if 'KEY_' in x])"
         - KEY_E                         #labelled 'E'

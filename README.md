@@ -1,10 +1,14 @@
 <meta name="google-site-verification" content="GTdRjLssPUj3_gDeLmqs3jN1I4IQPgLGoCoegPG-E9U" />
 
-Vinsa 1060 plus - driver-all-in-one
-=====================================
+Vinsa 1060 plus - driver-all-in-one (17/06/2026)
+================================================
+
 This is the all-in-one version from Delfosse Aurore([ON7AUR](https://www.qrz.com/db/ON7AUR))
 
+Forked from [extenebrisadlucem](https://github.com/extenebrisadlucem/vinsa1060plus-driver-all-in-one) (Thanks for your work,I debugged stylus buttons, usb communication and made some optimalizations)...
+
 Forked from [f-caro](https://github.com/f-caro/10moons-driver-vin1060plus) (Thanks for your work,I wanted to add upper buttons and include work from Alex to have «everything-in-one» executable)...
+
 Forked from [Alex-S-V](https://github.com/alex-s-v/10moons-driver) ( thanks dude for the pyUSB and T503 case study) 
 
 ![](resources/VINSA1060PLUS.jpeg)
@@ -23,12 +27,16 @@ Driver which provides basic functionality for VINSA 1060plus T501 tablet:
 * 12 buttons on the tablet itself
 * 10 buttons on top
 * Correct X and Y positioning (two active area modes present:  Android Active Area & Full Tablet Active Area)
-* Pressure sensitivity ( able to read the values, but unable to pass it onto Graphics Software )
+* Pressure sensitivity ( able to read the values, but unable to pass it onto Graphics Software (? at least works with some inc. Gimp. Need to be testing) )
+* Anyway, it is not true driver. It is a console application that unload kernel driver and provide correct support of 1060plus tablet. Basically run it with "nohup /path_to_driver/driver-vin1060plus.bin &" command as root. It could be done in rc.local script or by systemd services. It could be also started foreground (it support option --debug ) or in .xinitrc file if you have sufficient privilages.
 
 Tablet has 4096 levels in both axes and 2047 levels of pressure ( Product description says 8092, but actual output readings are 2047 max).
 
 ## The progress so far...
 
+Currently, 2026, the tablet should work as a mouse and a pen at once. Some programs like Gimp or Krita should be able to use tools that depend on stylus tip pressure. Take a look into source code for description of changes and comments.
+
+Historic comments:
 With linux Kernel 5+,  the graphics tablet should be detected but pen movement is restricted to Android Active Area (the small area on the tablet).  That driver was added to the kernel but interacts with the T503 chipset. 
 Thanks to [Digimend - https://github.com/DIGImend](https://github.com/DIGImend) for providing valuable functionality not just to 10moons Tablets, but to a variety of other popular Tablets.
 
@@ -40,7 +48,7 @@ The person to discover this "hack" was Mr.Digimend himself and thanks to the [Yo
 # How to install
 1.  Clone this repository
 ```bash
-git clone https://github.com/extenebrisadlucem/vinsa1060plus-driver-all-in-one.git
+git clone https://github.com/szdowk/vinsa1060plus-driver-all-in-one.git
 ```
 2.  Change Directory and create a virtual environment for python
 ```bash
@@ -83,7 +91,7 @@ exit
 
 Configuration of the driver placed in `~/.config/config-vin1060plus/config-vin1060plus.yaml` file.
 
-You may need to change the *vendor_id* and the *product_id* but I'm not sure (You device can have the same values as mine, but if it is not you can run the *lsusb* command to find yours).
+You may need to change the *vendor_id* and the *product_id* but I'm not sure (Your device can have the same values as mine, but if it is not you can run the *lsusb* command to find yours).
 
 Buttons assigned from top left (button 1) to bottom right (button 12) in the order from left to right. You can assign to them any button on the keyboard and their combinations separating them with a plus (+) sign.
 
@@ -158,12 +166,8 @@ The forum that got me started with finding a simple solution to my cheap graphic
 
 * `DEBUG = True` , [flag variable exists](https://github.com/f-caro/10moons-driver-vin1060plus/blob/a9cb0839de7a56f56fe0facc96c7e4c2cf0e86de/driver-vin1060plus.py#L12) that helps debug the typical behaviour surrounding the driver interaction with T501 graphics compatible tablet.  To be honest, it's just print() statements alllll theee waaayyyy downnnn. :)
 
-* On stylus button sometimes keep sending «K» or «P», juste press «space» on tablette button.
-
 
 # TODOS
-
-* Key Combinations dont work as expected. Need to debug that.  Keyboard HotKeys also dont work as expected.  Maybe try a different keyboard/mouse interaction python library --- ( pynPut ) https://nitratine.net/blog/post/simulate-keypresses-in-python/
 
 * Allow the Graphics App (e.g. Gimp, Scribus, Pix, Inkscape etc. ) to make use of the "pressure sensitivity" measurement. I think the issue lies with  `vpen.write(ecodes.EV_KEY, ecodes.BTN_TOUCH, 0)`  and  `ecodes.BTN_MOUSE` conflict.  `BTN_TOUCH` does not execute event, while  `BTN_MOUSE` does. ???
 
